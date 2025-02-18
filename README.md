@@ -24,16 +24,67 @@ verl is fast with:
 <p align="center">
 | <a href="https://verl.readthedocs.io/en/latest/index.html"><b>Documentation</b></a> | <a href="https://arxiv.org/abs/2409.19256v2"><b>Paper</b></a> | <a href="https://join.slack.com/t/verlgroup/shared_invite/zt-2w5p9o4c3-yy0x2Q56s_VlGLsJ93A6vA"><b>Slack</b></a> | <a href="https://raw.githubusercontent.com/eric-haibin-lin/verl-community/refs/heads/main/WeChat.JPG"><b>Wechat</b></a> | <a href="https://x.com/verl_project"><b>Twitter</b></a>
 
-<!-- <a href=""><b>Slides</b></a> | -->
 </p>
 
-## News
+## Custom Instructions
 
-- [2025/2] We will present verl in the [Bytedance/NVIDIA/Anyscale Ray Meetup](https://lu.ma/ji7atxux) in bay area on Feb 13th. Come join us in person!
-- [2025/1] [Doubao-1.5-pro](https://team.doubao.com/zh/special/doubao_1_5_pro) is released with SOTA-level performance on LLM & VLM. The RL scaling preview model is trained using verl, reaching OpenAI O1-level performance on math benchmarks (70.0 pass@1 on AIME).
-- [2024/12] The team presented <a href="https://neurips.cc/Expo/Conferences/2024/workshop/100677">Post-training LLMs: From Algorithms to Infrastructure</a> at NeurIPS 2024. [Slides](https://github.com/eric-haibin-lin/verl-data/tree/neurips) and [video](https://neurips.cc/Expo/Conferences/2024/workshop/100677) available.
-- [2024/10] verl is presented at Ray Summit. [Youtube video](https://www.youtube.com/watch?v=MrhMcXkXvJU&list=PLzTswPQNepXntmT8jr9WaNfqQ60QwW7-U&index=37) available.
-- [2024/08] HybridFlow (verl) is accepted to EuroSys 2025.
+## Setup
+1. Set up environment
+  ```bash
+  spack env activate .
+  spack concretize -f && spack install -j32
+  ```
+2. Initialize a virtual environment using `uv`
+  ```bash
+  uv venv --seed
+  ```
+3. Activate the virtual environment
+  ```bash
+  source ./.venv/bin/activate
+  ```
+4. Updates
+  ```bash
+  uv pip install --upgrade pip setuptools wheel
+  ```
+4. Install `vllm`. Note that we need the specific version or we'll get an error when we try to run veRL later.
+  ```bash
+  uv pip install vllm==0.6.3
+  ```
+5. Install items first
+  ```bash
+  uv pip install torch torchvision torchaudio torchaudio transformers
+  ```
+6. Deal with Flash Attention specifically (cannot use isolated build environment, so use `--no-build-isolation`). We have to do this manually because the `pyproject.toml` file cannot include the `--no-build-isolation` flag.
+  ```bash
+  uv pip install -U --no-build-isolation flash-attn==2.6.3
+  ```
+7. Sync and Lock the environment
+  ```bash
+  uv sync --extra gpu
+  uv lock
+  ```
+8. Install dependencies in the virtual environment using `uv` and the `pyproject.toml`
+  ```bash
+  uv pip install -r pyproject.toml --extra gpu
+  ```
+<!-- 9. Install `verl` in the virtual environment
+  ```bash
+  uv pip install -e .
+  ``` -->
+
+### Prepare Datasets
+1. Download the `gsm8k` dataset
+  ```bash
+  mkdir -p ./data
+  git clone https://huggingface.co/datasets/openai/gsm8k ./data/gsm8k
+  mv ./data/gsm8k/main/test-00000-of-00001.parquet ./data/gsm8k/test.parquet
+  mv ./data/gsm8k/main/train-00000-of-00001.parquet ./data/gsm8k/train.parquet
+  ```
+2. Pre-process the `gsm8k` dataset
+  ```bash
+  source .venv/bin/activate
+  python ./examples/data_preprocess/gsm8k.py --local_dir ./data/gsm8k
+  ```
 
 ## Key Features
 

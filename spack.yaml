@@ -1,0 +1,22 @@
+# This is a Spack Environment file.
+#
+# It describes a set of packages to be installed, along with
+# configuration settings.
+spack:
+    # add package specs to the `specs` list
+    specs:
+        - cuda@12.4.1
+          # - openmpi@5.0.3 schedulers=slurm +cuda cuda_arch=86 ^slurm@23.11.9 ^ucx@1.17.0
+          # - nccl@2.22.3-1 +cuda cuda_arch=86
+          # - aws-ofi-nccl@master
+          # - nccl-tests@2.13.6 mpi=true cuda_arch=86
+          # - gdrcopy@master +cuda cuda_arch=86
+          # packages:
+          #     all:
+          #         providers:
+          #             mpi: [openmpi] # Force everything that wants 'mpi' to use openmpi@5.0.3 from above
+          #         compiler: [gcc@11.5.0]
+        - git-lfs
+    view: true
+    concretizer:
+        unify: true

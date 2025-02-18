@@ -1,4 +1,5 @@
 data
+.spack-env/
 
 **/*.pt
 **/checkpoints
